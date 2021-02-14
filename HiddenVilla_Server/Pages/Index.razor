@@ -1,7 +1,26 @@
 ﻿@page "/"
+@using HiddenVilla_Server.Model
 
-<h1>Hello, world!</h1>
+@* <h1>Hello, world!</h1> *@
+@* *@
+@* Welcome to your new app. *@
+@* *@
+@* <SurveyPrompt Title="How is Blazor working for you?"/> *@
+<h2 class="bg-light border p-2">First Room</h2>
+Room: @_room.RoomName
+<br>
+Price: @_room.Price
+<br>
 
-Welcome to your new app.
+<input type="number" @bind-value="@_room.Price" @bind-value:event="oninput"/>
 
-<SurveyPrompt Title="How is Blazor working for you?"/>
+@code
+{
+    BlazorRoom _room = new()
+    {
+        Id = 1,
+        RoomName = "Villa Suite",
+        IsActive = true,
+        Price = 499
+    };
+}

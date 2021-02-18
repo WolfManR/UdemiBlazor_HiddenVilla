@@ -1,0 +1,74 @@
+@page "/demoHotel"
+@using Model
+
+
+<h3>We will display hotel rooms and amenitites here!</h3>
+
+<div class="border p-2 mt-2" style="background-color: azure">
+    <h2 class="text-info">Room List [USING COMPONENT]</h2>
+
+    <div class="row container">
+        @foreach (var room in Rooms)
+            {
+                <div class="bg-light border p-2 mt-4 col-5">
+                    <h4 class="text-secondary">Room - @room.Id</h4>
+                    
+                    @room.RoomName<br>
+                    $@room.Price.ToString("c")<br>
+                    <input type="checkbox" @bind-value="@room.IsActive" checked="@(room.IsActive ? "Checked" : null)"> &nbsp; Is Active<br>
+                    <span>This room is @(room.IsActive ? "Active" : "Inactive")</span><br>
+                    @if (room.IsActive)
+                    {
+                        @foreach (var prop in room.RoomProps)
+                        { 
+                            <span>@prop.Name - @prop.Value</span><br>
+                        }
+                    }
+                    
+                    <input type="button" class="btn btn-danger" value="Delete"/>
+                    <input type="button" class="btn btn-success" value="Edit"/>
+                </div>
+            }
+    </div>
+</div>
+
+
+@code {
+    List<BlazorRoom> Rooms = new();
+
+    #region Overrides of ComponentBase
+
+    /// <inheritdoc />
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        Rooms.Add(new()
+        {
+            Id = 101,
+            RoomName = "King Suite",
+            IsActive = false,
+            Price = 100,
+            RoomProps = new()
+            {
+                new() {Id = 1, Name = "Sq Ft", Value = "100"},
+                new() {Id = 2, Name = "Occupancy", Value = "3"},
+            }
+        });
+        Rooms.Add(new()
+        {
+            Id = 102,
+            RoomName = "Quine Suite",
+            IsActive = false,
+            Price = 70,
+            RoomProps = new()
+            {
+                new() {Id = 1, Name = "Sq Ft", Value = "150"},
+                new() {Id = 2, Name = "Occupancy", Value = "6"},
+            }
+        });
+    }
+
+    #endregion
+
+}

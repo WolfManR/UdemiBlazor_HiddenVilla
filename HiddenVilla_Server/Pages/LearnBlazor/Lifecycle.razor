@@ -1,0 +1,104 @@
+@page "/lifecycle"
+@using System.Threading
+
+<h3>Lifecycle</h3>
+
+<div class="border">
+    <LifecycleComponent CountValue="@currentCount"/>
+</div>
+
+<p>Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<br>
+@Count
+<button class="btn btn-primary" @onclick="StartCountdown">Start Countdown</button>
+<br>
+@foreach (var item in EventType)
+{
+    @item
+    <hr>
+}
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+
+
+    List<string> EventType = new();
+
+    #region Overrides of ComponentBase
+
+    /// <inheritdoc />
+    protected override void OnInitialized()
+    {
+        EventType.Add("OnInitialized is called");
+    }
+
+    /// <inheritdoc />
+    protected override async Task OnInitializedAsync()
+    {
+        EventType.Add("OnInitializedAsync is called");
+        await Task.Delay(1000);
+    }
+    
+    
+    
+    /// <inheritdoc />
+    protected override void OnParametersSet()
+    {
+        EventType.Add("OnParametersSet is called");
+    }
+
+    /// <inheritdoc />
+    protected override async Task OnParametersSetAsync()
+    {
+        EventType.Add("OnParametersSetAsync is called");
+        await Task.Delay(1000);
+    }
+
+    /// <inheritdoc />
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender) currentCount = 111;
+        else currentCount = 999;
+        EventType.Add("OnAfterRender is called");
+    }
+
+    /// <inheritdoc />
+    protected override async Task OnAfterRenderAsync(bool firstRender) 
+    {
+        EventType.Add("OnAfterRenderAsync is called");
+        await Task.Delay(1000);
+    }
+
+    /// <inheritdoc />
+    protected override bool ShouldRender()
+    {
+        EventType.Add("ShouldRender is called");
+        return true;  // ui will be rendered on true
+    }
+
+    #endregion
+
+
+    public int Count { get; set; } = 5;
+
+    void StartCountdown()
+    {
+        var timer = new Timer(TimeCallback, null, 1000, 1000);
+    }
+
+    void TimeCallback(object state)
+    {
+        if (Count > 0)
+        {
+            Count--;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+}

@@ -6,18 +6,32 @@
 
 <div class="border p-2 mt-2" style="background-color: azure">
     <h2 class="text-info">Room List [USING COMPONENT]</h2>
-
+    <div class="col-12">
+        <h4 class="text-info">Hotel Room's</h4>
+    </div>
     <div class="row container">
         @foreach (var room in Rooms)
-            {
-                <IndividualRoom Room="@room"/>
-            }
+        {
+            <IndividualRoom Room="@room"/>
+        }
+    </div>
+    
+    <div class="col-12 mt-4">
+        <h4 class="text-info">Hotel Amenitie's[assignment]</h4>
+    </div>
+    <div class="row container">
+        @foreach (var amenity in Amenities)
+        {
+            <IndividualAmenity Amenity="@amenity"/>
+        }
     </div>
 </div>
 
 
 @code {
     List<BlazorRoom> Rooms = new();
+
+    List<Amenity> Amenities = new();
 
     #region Overrides of ComponentBase
 
@@ -49,6 +63,28 @@
                 new() {Id = 1, Name = "Sq Ft", Value = "150"},
                 new() {Id = 2, Name = "Occupancy", Value = "6"},
             }
+        });
+
+        Amenities.AddRange(new[]
+        {
+            new Amenity()
+            {
+                Id = 111,
+                Name = "Gym",
+                Description = "24x7 gym room is available."
+            },
+            new Amenity()
+            {
+                Id = 222,
+                Name = "Swimming Pool",
+                Description = "Pool room is open from 6am to 10pm."
+            },
+            new Amenity()
+            {
+                Id = 333,
+                Name = "Free Breakfast",
+                Description = "Enjoy free breakfast at our hotel."
+            },
         });
     }
 

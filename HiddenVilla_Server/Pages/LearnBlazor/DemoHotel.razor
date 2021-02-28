@@ -8,11 +8,12 @@
     <h2 class="text-info">Room List [USING COMPONENT]</h2>
     <div class="col-12">
         <h4 class="text-info">Hotel Room's</h4>
+        <span>Rooms Selected - @SelectedRooms</span>
     </div>
     <div class="row container">
-        @foreach (var room in Rooms)
+        @foreach (var room in _rooms)
         {
-            <IndividualRoom Room="@room"/>
+            <IndividualRoom OnRoomCheckBoxSelection="RoomSelectionCounterChanged" Room="@room"/>
         }
     </div>
     
@@ -20,7 +21,7 @@
         <h4 class="text-info">Hotel Amenitie's[assignment]</h4>
     </div>
     <div class="row container">
-        @foreach (var amenity in Amenities)
+        @foreach (var amenity in _amenities)
         {
             <IndividualAmenity Amenity="@amenity"/>
         }
@@ -29,9 +30,13 @@
 
 
 @code {
-    List<BlazorRoom> Rooms = new();
+    List<BlazorRoom> _rooms = new();
 
-    List<Amenity> Amenities = new();
+    List<Amenity> _amenities = new();
+
+    public int SelectedRooms { get; set; } = 0;
+    
+    
 
     #region Overrides of ComponentBase
 
@@ -40,7 +45,7 @@
     {
         base.OnInitialized();
 
-        Rooms.Add(new()
+        _rooms.Add(new()
         {
             Id = 101,
             RoomName = "King Suite",
@@ -52,7 +57,7 @@
                 new() {Id = 2, Name = "Occupancy", Value = "3"},
             }
         });
-        Rooms.Add(new()
+        _rooms.Add(new()
         {
             Id = 102,
             RoomName = "Quine Suite",
@@ -65,7 +70,7 @@
             }
         });
 
-        Amenities.AddRange(new[]
+        _amenities.AddRange(new[]
         {
             new Amenity()
             {
@@ -90,4 +95,10 @@
 
     #endregion
 
+
+    protected void RoomSelectionCounterChanged(bool isRoomSelected)
+    {
+        if (isRoomSelected) SelectedRooms++;
+        else SelectedRooms--;
+    }
 }

@@ -23,9 +23,14 @@
     <div class="row container">
         @foreach (var amenity in _amenities)
         {
-            <IndividualAmenity Amenity="@amenity"/>
+            <IndividualAmenity OnAmenitySelected="OnSelectAmenity" Amenity="@amenity"/>
         }
     </div>
+    
+    <div class="col-12">
+        <p class="text-secondary">Selected amenity : @SelectedAmenity</p>
+    </div>
+    
 </div>
 
 
@@ -35,7 +40,7 @@
     List<Amenity> _amenities = new();
 
     public int SelectedRooms { get; set; } = 0;
-    
+    public string SelectedAmenity { get; set; }
     
 
     #region Overrides of ComponentBase
@@ -100,5 +105,11 @@
     {
         if (isRoomSelected) SelectedRooms++;
         else SelectedRooms--;
+    }
+
+    protected void OnSelectAmenity(string name)
+    {
+        if(SelectedAmenity == name) return;
+        SelectedAmenity = name;
     }
 }

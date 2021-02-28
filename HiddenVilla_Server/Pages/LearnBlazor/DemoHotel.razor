@@ -23,7 +23,10 @@
     <div class="row container">
         @foreach (var amenity in _amenities)
         {
-            <IndividualAmenity OnAmenitySelected="OnSelectAmenity" Amenity="@amenity"/>
+            <IndividualAmenity OnAmenitySelected="OnSelectAmenity" Amenity="@amenity">
+                <First>#1</First>
+                <Second>#2</Second>
+            </IndividualAmenity>
         }
     </div>
     

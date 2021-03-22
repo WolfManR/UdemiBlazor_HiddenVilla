@@ -1,14 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiddenVilla_Server", "HiddenVilla_Server\HiddenVilla_Server.csproj", "{952CDA1F-F939-4C37-A0FD-877474A99F78}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31112.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HiddenVilla_Server", "HiddenVilla_Server\HiddenVilla_Server.csproj", "{952CDA1F-F939-4C37-A0FD-877474A99F78}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{8B82AB5C-2050-483B-9F8B-5DBD571FC72E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "DataAccess\DataAccess.csproj", "{8B82AB5C-2050-483B-9F8B-5DBD571FC72E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{F93F2EA7-40BE-4D2A-967B-4851AA6507C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{F93F2EA7-40BE-4D2A-967B-4851AA6507C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Business", "Business\Business.csproj", "{C5A9E77A-EE00-49AB-98EB-74A772E5969F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Business", "Business\Business.csproj", "{C5A9E77A-EE00-49AB-98EB-74A772E5969F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{27470F3D-AC8E-4D32-8E6C-DA7BC0C45E6A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csproj", "{27470F3D-AC8E-4D32-8E6C-DA7BC0C45E6A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{9D353AB0-7FF5-47C8-A262-379E66549EE1}"
 EndProject
@@ -39,10 +42,16 @@ Global
 		{27470F3D-AC8E-4D32-8E6C-DA7BC0C45E6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27470F3D-AC8E-4D32-8E6C-DA7BC0C45E6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{C5A9E77A-EE00-49AB-98EB-74A772E5969F} = {9D353AB0-7FF5-47C8-A262-379E66549EE1}
-		{F93F2EA7-40BE-4D2A-967B-4851AA6507C9} = {9D353AB0-7FF5-47C8-A262-379E66549EE1}
 		{8B82AB5C-2050-483B-9F8B-5DBD571FC72E} = {9D353AB0-7FF5-47C8-A262-379E66549EE1}
+		{F93F2EA7-40BE-4D2A-967B-4851AA6507C9} = {9D353AB0-7FF5-47C8-A262-379E66549EE1}
+		{C5A9E77A-EE00-49AB-98EB-74A772E5969F} = {9D353AB0-7FF5-47C8-A262-379E66549EE1}
 		{27470F3D-AC8E-4D32-8E6C-DA7BC0C45E6A} = {9D353AB0-7FF5-47C8-A262-379E66549EE1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7FF5CAAA-A2BA-4580-B004-514055B120BB}
 	EndGlobalSection
 EndGlobal

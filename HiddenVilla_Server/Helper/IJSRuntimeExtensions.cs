@@ -14,5 +14,15 @@ namespace HiddenVilla_Server.Helper
         {
             await self.InvokeVoidAsync("ShowToastr", "error", message);
         }
+        
+        public static async ValueTask SwalSuccess(this IJSRuntime self, string message, string title)
+        {
+            await self.InvokeVoidAsync("ShowSwal", "success", title, message);
+        }
+        
+        public static async ValueTask SwalError(this IJSRuntime self, string message, string title)
+        {
+            await self.InvokeVoidAsync("ShowSwal", "error", title, message);
+        }
     }
 }

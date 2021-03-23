@@ -7,9 +7,14 @@
 <div class="row">
     <button class="btn btn-secondary" @onclick="() => TestConfirmBox(ConfirmMessage)">Test Confirm Button</button>
 </div>
-<div class="row">
-    <button class="btn btn-success" @onclick="TestSuccess">Test Toastr Success</button>
-    <button class="btn btn-danger" @onclick="TestFailure">Test Toastr failure</button>
+<div class="row mt-4">
+    <button class="btn btn-success" @onclick="TestToastrSuccess">Test Toastr Success</button>
+    <button class="btn btn-danger" @onclick="TestToastrFailure">Test Toastr Failure</button>
+</div>
+
+<div class="row mt-4">
+    <button class="btn btn-success" @onclick="TestSwalSuccess">Test Swal Success</button>
+    <button class="btn btn-danger" @onclick="TestSwalFailure">Test Swal Failure</button>
 </div>
 
 
@@ -34,14 +39,24 @@
        ConfirmResult = await JsRuntime.InvokeAsync<bool>("confirm", message);
     }
 
-    private async Task TestSuccess()
+    private async Task TestToastrSuccess()
     {
         await JsRuntime.ToastrSuccess("Success Message");
     }
 
-    private async Task TestFailure()
+    private async Task TestToastrFailure()
     {
         await JsRuntime.ToastrError("Error Message");
+    }
+    
+    private async Task TestSwalSuccess()
+    {
+        await JsRuntime.SwalSuccess("Success Message WooHoo!", "Success!");
+    }
+
+    private async Task TestSwalFailure()
+    {
+        await JsRuntime.SwalError("Error Message Ugh oh!", "Error!");
     }
 
 }

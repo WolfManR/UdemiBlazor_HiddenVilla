@@ -1,8 +1,10 @@
 ﻿@page "/hotel-room/create"
+@page "/hotel-room/edit/{id:int}"
 @using Models
 @using Business.Repository.IRepository
 @inject IHotelRoomRepository HotelRoomRepository
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
 
 <div class="row mt-2 mb-5">
     <h3 class="card-title text-info mb-3 ml-3">@Title Hotel Room</h3>
@@ -49,15 +51,56 @@
 </div>
 
 @code {
+    [Parameter]
+    public int? Id { get; set; }
+
     private HotelRoomDTO HotelRoomModel { get; set; } = new();
     private string Title { get; set; } = "Create";
 
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id is not null)
+        {
+            // updating
+            Title = "Update";
+            HotelRoomModel = await HotelRoomRepository.Get(Id.Value);
+        }
+        else
+        {
+            // create
+            HotelRoomModel = new HotelRoomDTO();
+        }
+    }
+
     private async Task HandleHotelRoomUpsert()
     {
-        var roomDetailsByName = await HotelRoomRepository.IsRoomUnique(HotelRoomModel.Name);
-        if (roomDetailsByName is not null) return;
+        try
+        {
+            var roomDetailsByName = await HotelRoomRepository.IsRoomUnique(HotelRoomModel.Name, HotelRoomModel.Id);
+            if (roomDetailsByName is not null)
+            {
+                await JsRuntime.ToastrError("Room name already exists.");
+                return;
+            }
 
-        var createdResult = await HotelRoomRepository.Create(HotelRoomModel);
+            if(this is {HotelRoomModel: {Id: <0 or >0 }, Title: "Update"})
+            {
+                // updating
+                var updateRoomResult = await HotelRoomRepository.Update(HotelRoomModel.Id, HotelRoomModel);
+                await JsRuntime.ToastrSuccess("Hotel room updated successfully.");
+            }
+            else
+            {
+                // create
+                var createdResult = await HotelRoomRepository.Create(HotelRoomModel);
+                await JsRuntime.ToastrSuccess("Hotel room created successfully.");
+            }
+        }
+        catch (Exception e)
+        {
+            // log
+        }
+
         NavigationManager.NavigateTo("hotel-room");
     }
 }

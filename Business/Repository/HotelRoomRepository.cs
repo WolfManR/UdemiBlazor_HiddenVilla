@@ -96,12 +96,22 @@ namespace Business.Repository
         }
 
         /// <inheritdoc />
-        public async Task<HotelRoomDTO> IsRoomUnique(string name)
+        public async Task<HotelRoomDTO> IsRoomUnique(string name, int roomId = 0)
         {
             try
             {
-                var hotelRoom = await _db.HotelRooms.FirstOrDefaultAsync(x => string.Equals(x.Name, name, StringComparison.CurrentCultureIgnoreCase));
-                return _mapper.Map<HotelRoomDTO>(hotelRoom);
+                if (roomId == 0)
+                {
+                    var hotelRoom = await _db.HotelRooms.FirstOrDefaultAsync(x => string.Equals(x.Name.ToLower(), name.ToLower(), StringComparison.CurrentCultureIgnoreCase));
+                    return _mapper.Map<HotelRoomDTO>(hotelRoom); 
+                }
+                else
+                {
+                    var hotelRoom = await _db.HotelRooms.FirstOrDefaultAsync(x => 
+                        string.Equals(x.Name.ToLower(), name.ToLower(), StringComparison.CurrentCultureIgnoreCase) &&
+                        x.Id != roomId);
+                    return _mapper.Map<HotelRoomDTO>(hotelRoom);
+                }
             }
             catch
             {

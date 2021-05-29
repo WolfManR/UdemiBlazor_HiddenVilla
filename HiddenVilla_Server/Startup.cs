@@ -13,6 +13,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using HiddenVilla_Server.Data;
+using HiddenVilla_Server.Service;
+using HiddenVilla_Server.Service.IService;
 using Microsoft.EntityFrameworkCore;
 
 namespace HiddenVilla_Server
@@ -32,11 +34,14 @@ namespace HiddenVilla_Server
         {
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
 
             services.AddScoped<IHotelRoomRepository, HotelRoomRepository>();
+            services.AddScoped<IHotelImagesRepository, HotelImagesRepository>();
+            services.AddScoped<IFileUpload, FileUpload>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

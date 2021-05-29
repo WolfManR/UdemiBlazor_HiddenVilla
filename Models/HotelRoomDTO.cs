@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Models
 {
@@ -16,5 +17,8 @@ namespace Models
         public double RegularRate { get; set; }
         public string Details { get; set; }
         public string SqFt { get; set; }
+
+        public virtual ICollection<HotelRoomImageDTO> HotelRoomImages { get; set; }
+        public List<string> ImageUrls { get; set; }
     }
 }

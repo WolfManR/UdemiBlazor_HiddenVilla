@@ -62,7 +62,7 @@ namespace Business.Repository
         {
             try
             {
-                var hotelRoom = await _db.HotelRooms.FirstOrDefaultAsync(x=>x.Id == roomId);
+                var hotelRoom = await _db.HotelRooms.Include(r => r.HotelRoomImages).FirstOrDefaultAsync(x=>x.Id == roomId);
                 return _mapper.Map<HotelRoomDTO>(hotelRoom);
             }
             catch
@@ -86,7 +86,7 @@ namespace Business.Repository
         {
             try
             {
-                IEnumerable<HotelRoomDTO> hotelRoomDTOs = _db.HotelRooms.ProjectTo<HotelRoomDTO>(_mapper.ConfigurationProvider);
+                IEnumerable<HotelRoomDTO> hotelRoomDTOs = _db.HotelRooms.Include(r => r.HotelRoomImages).ProjectTo<HotelRoomDTO>(_mapper.ConfigurationProvider);
                 return hotelRoomDTOs;
             }
             catch

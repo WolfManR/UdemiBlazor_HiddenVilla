@@ -46,6 +46,12 @@
                     <div class="form-group">
                         <InputFile OnChange="HandleImageUpload" multiple/>
                         <div class="row">
+                            @if (IsImageUploadProcessStarted)
+                            {
+                                <div class="col-md-12">
+                                    <span><i class="fa fa-spin fa-spinner"></i> Please wait.. Images are uploading</span>
+                                </div>
+                            }
                             @if (HotelRoomModel.ImageUrls is not null && HotelRoomModel.ImageUrls.Count > 0)
                             {
                                 int serial = 1;
@@ -56,7 +62,7 @@
                                             <span class="room-image-title">@serial</span>
                                         </div>
 
-                                        <button type="button" class="btn btn-outline-danger btn-block mt-4">
+                                        <button type="button" @onclick="() => DeletePhoto(roomImage)" class="btn btn-outline-danger btn-block mt-4">
                                             Delete
                                         </button>
                                     </div>
@@ -82,6 +88,8 @@
     private HotelRoomDTO HotelRoomModel { get; set; } = new();
     private HotelRoomImageDTO RoomImage { get; set; } = new();
     private string Title { get; set; } = "Create";
+    private List<string> DeletedImageNames { get; set; } = new();
+    private bool IsImageUploadProcessStarted { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -117,8 +125,17 @@
             {
                 // updating
                 var updateRoomResult = await HotelRoomRepository.Update(HotelRoomModel.Id, HotelRoomModel);
-                if (HotelRoomModel.ImageUrls is not null && HotelRoomModel.ImageUrls.Any())
+                if (HotelRoomModel.ImageUrls is not null && HotelRoomModel.ImageUrls.Any() || (DeletedImageNames is not null && DeletedImageNames.Any()))
                 {
+                    if(DeletedImageNames is not null && DeletedImageNames.Any())
+                    {
+                        foreach (var deleted in DeletedImageNames)
+                        {
+                            var imageName = deleted.Replace($"RoomImages/", "");
+                            var result = FileUpload.DeleteFile(imageName);
+                            await HotelImageRepository.DeleteByImageUrl(deleted);
+                        }
+                    }
                     await AddHotelRoomImage(updateRoomResult);
                 }
                 await JsRuntime.ToastrSuccess("Hotel room updated successfully.");
@@ -141,6 +158,7 @@
 
     private async Task HandleImageUpload(InputFileChangeEventArgs e)
     {
+        IsImageUploadProcessStarted = true;
         try
         {
             var images = new List<string>();
@@ -178,6 +196,7 @@
                     return;
                 }
             }
+            IsImageUploadProcessStarted = false;
         }
         catch (Exception ex)
         {
@@ -198,6 +217,31 @@
                 };
                 await HotelImageRepository.Create(RoomImage);
             }
+        }
+    }
+
+    private async Task DeletePhoto(string imageUrl)
+    {
+        try
+        {
+            var imageIndex = HotelRoomModel.ImageUrls.FindIndex(x => x == imageUrl);
+            var imageName = imageUrl.Replace($"RoomImages/", "");
+            if (HotelRoomModel.Id == 0 && Title == "Create")
+            {
+                //create
+                var result = FileUpload.DeleteFile(imageName);
+            }
+            else
+            {
+                //update
+                DeletedImageNames ??= new();
+                DeletedImageNames.Add(imageUrl);
+            }
+            HotelRoomModel.ImageUrls.RemoveAt(imageIndex);
+        }
+        catch (Exception ex)
+        {
+            await JsRuntime.ToastrError(ex.Message);
         }
     }
 }

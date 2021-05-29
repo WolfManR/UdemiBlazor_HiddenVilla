@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -45,6 +46,15 @@ namespace Business.Repository
         public async Task<IEnumerable<HotelRoomImageDTO>> GetRoomImages(int roomId)
         {
            return await _db.HotelRoomImages.Where(x => x.RoomId == roomId).ProjectTo<HotelRoomImageDTO>(_mapper.ConfigurationProvider).ToListAsync();
+        }
+
+        public async Task<int> DeleteByImageUrl(string imageUrl)
+        {
+            var images = await _db.HotelRoomImages
+                .FirstOrDefaultAsync(x => string.Equals(x.RoomImageUrl, imageUrl, StringComparison.CurrentCultureIgnoreCase));
+            if (images is null) return 0;
+            _db.HotelRoomImages.Remove(images);
+            return await _db.SaveChangesAsync();
         }
     }
 }

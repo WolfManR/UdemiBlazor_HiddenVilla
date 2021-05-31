@@ -39,11 +39,47 @@
                         <label>Sq ft.</label>
                         <InputText @bind-Value="HotelRoomModel.SqFt" class="form-control"/>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="height: 250px;">
                         <label>Details</label>
-                        <InputTextArea @bind-Value="HotelRoomModel.Details" class="form-control"/>
+                        @*<InputTextArea @bind-Value="HotelRoomModel.Details" class="form-control"/>*@
+                        
+                        <BlazoredTextEditor @ref="@QuillHtml" Placeholder="Please enter room details">
+                            <ToolbarContent>
+                                <select class="ql-header">
+                                    <option selected=""></option>
+                                    <option value="1"></option>
+                                    <option value="2"></option>
+                                    <option value="3"></option>
+                                    <option value="4"></option>
+                                    <option value="5"></option>
+                                </select>
+                                <span class="ql-formats">
+                                    <button class="ql-bold"></button>
+                                    <button class="ql-italic"></button>
+                                    <button class="ql-underline"></button>
+                                    <button class="ql-strike"></button>
+                                </span>
+                                <span class="ql-formats">
+                                    <select class="ql-color"></select>
+                                    <select class="ql-background"></select>
+                                </span>
+                                <span class="ql-formats">
+                                    <button class="ql-list" value="ordered"></button>
+                                    <button class="ql-list" value="bullet"></button>
+                                </span>
+                                <span class="ql-formats">
+                                    <button class="ql-link"></button>
+                                </span>
+                            </ToolbarContent>
+
+                            <EditorContent>
+
+                            </EditorContent>
+                        </BlazoredTextEditor>
+
                     </div>
-                    <div class="form-group">
+
+                    <div class="form-group" style="padding-top: 70px;">
                         <InputFile OnChange="HandleImageUpload" multiple/>
                         <div class="row">
                             @if (IsImageUploadProcessStarted)
@@ -91,6 +127,8 @@
     private List<string> DeletedImageNames { get; set; } = new();
     private bool IsImageUploadProcessStarted { get; set; }
 
+    public BlazoredTextEditor QuillHtml { get; set; } = new();
+
     protected override async Task OnInitializedAsync()
     {
         if (Id is not null)
@@ -110,6 +148,28 @@
         }
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        var loading = true;
+        while (loading)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(HotelRoomModel.Details))
+                {
+                    await QuillHtml.LoadHTMLContent(HotelRoomModel.Details);
+                }
+                loading = false;
+            }
+            catch
+            {
+                await Task.Delay(10);
+                loading = true;
+            }
+        }
+    }
+
     private async Task HandleHotelRoomUpsert()
     {
         try
@@ -124,6 +184,7 @@
             if(this is {HotelRoomModel: {Id: <0 or >0 }, Title: "Update"})
             {
                 // updating
+                HotelRoomModel.Details = await QuillHtml.GetHTML();
                 var updateRoomResult = await HotelRoomRepository.Update(HotelRoomModel.Id, HotelRoomModel);
                 if (HotelRoomModel.ImageUrls is not null && HotelRoomModel.ImageUrls.Any() || (DeletedImageNames is not null && DeletedImageNames.Any()))
                 {
@@ -143,6 +204,7 @@
             else
             {
                 // create
+                HotelRoomModel.Details = await QuillHtml.GetHTML();
                 var createdResult = await HotelRoomRepository.Create(HotelRoomModel);
                 await AddHotelRoomImage(createdResult);
                 await JsRuntime.ToastrSuccess("Hotel room created successfully.");

@@ -1,8 +1,10 @@
 ﻿@page "/hotel-room"
 @using Models
 @using Business.Repository.IRepository
+@using HiddenVilla_Server.Service.IService
 @inject IHotelRoomRepository HotelRoomRepository
 @inject IJSRuntime JsRuntime
+@inject IFileUpload FileUpload
 
 <div class="row mt-4">
     <div class="col-8">
@@ -54,11 +56,12 @@
     </div>
 </div>
 
-<DeleteConfirmation></DeleteConfirmation>
+<DeleteConfirmation IsParentComponentProcessing="IsProcessing" ConfirmationChanged="ConfirmDelete_Click"/>
 
 @code {
     private IEnumerable<HotelRoomDTO> HotelRooms { get; set; } = new List<HotelRoomDTO>();
     private int? DeleteRoomId { get; set; }
+    private bool IsProcessing { get; set; }
     
     protected override async Task OnInitializedAsync()
     {
@@ -67,13 +70,21 @@
 
     public async Task ConfirmDelete_Click(bool isConfirmed)
     {
+        IsProcessing = true;
         if (isConfirmed && DeleteRoomId.HasValue)
         {
+            var hotelRoom = await HotelRoomRepository.Get(DeleteRoomId.Value);
+            foreach (var image in hotelRoom.HotelRoomImages)
+            {
+                var imageName = image.RoomImageUrl.Replace($"RoomImages/", "");
+                FileUpload.DeleteFile(imageName);
+            }
             await HotelRoomRepository.Delete(DeleteRoomId.Value);
             await JsRuntime.ToastrSuccess("Hotel Room Deleted successfully");
             HotelRooms = await HotelRoomRepository.Get();
         }
         await JsRuntime.InvokeVoidAsync("HideDeleteConfirmationModal");
+        IsProcessing = false;
     }
 
     private async Task HandleDelete(int roomId)

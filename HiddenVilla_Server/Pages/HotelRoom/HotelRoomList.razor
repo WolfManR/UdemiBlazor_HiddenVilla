@@ -5,6 +5,7 @@
 @inject IHotelRoomRepository HotelRoomRepository
 @inject IJSRuntime JsRuntime
 @inject IFileUpload FileUpload
+@inject NavigationManager NavigationManager
 
 <div class="row mt-4">
     <div class="col-8">
@@ -76,7 +77,7 @@
             var hotelRoom = await HotelRoomRepository.Get(DeleteRoomId.Value);
             foreach (var image in hotelRoom.HotelRoomImages)
             {
-                var imageName = image.RoomImageUrl.Replace($"RoomImages/", "");
+                var imageName = image.RoomImageUrl.Replace($"{NavigationManager.BaseUri}RoomImages/", "");
                 FileUpload.DeleteFile(imageName);
             }
             await HotelRoomRepository.Delete(DeleteRoomId.Value);

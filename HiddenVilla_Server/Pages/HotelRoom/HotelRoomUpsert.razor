@@ -192,7 +192,7 @@
                     {
                         foreach (var deleted in DeletedImageNames)
                         {
-                            var imageName = deleted.Replace($"RoomImages/", "");
+                            var imageName = deleted.Replace($"{NavigationManager.BaseUri}RoomImages/", "");
                             var result = FileUpload.DeleteFile(imageName);
                             await HotelImageRepository.DeleteByImageUrl(deleted);
                         }
@@ -287,7 +287,7 @@
         try
         {
             var imageIndex = HotelRoomModel.ImageUrls.FindIndex(x => x == imageUrl);
-            var imageName = imageUrl.Replace($"RoomImages/", "");
+            var imageName = imageUrl.Replace($"{NavigationManager.BaseUri}RoomImages/", "");
             if (HotelRoomModel.Id == 0 && Title == "Create")
             {
                 //create

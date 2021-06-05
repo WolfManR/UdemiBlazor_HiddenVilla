@@ -69,16 +69,39 @@ namespace Business.Repository
             }
         }
 
-        public IEnumerable<HotelAmenityDTO> Get()
+        public async Task<IEnumerable<HotelAmenityDTO>> Get()
         {
             try
             {
-                var amenities = _db.HotelAmenities.ProjectTo<HotelAmenityDTO>(_mapper.ConfigurationProvider);
+                var amenities = await _db.HotelAmenities.ProjectTo<HotelAmenityDTO>(_mapper.ConfigurationProvider).ToListAsync();
                 return amenities;
             }
             catch
             {
               return null;
+            }
+        }
+
+        public async Task<HotelAmenityDTO> IsAmenityUnique(string name, int amenityId = 0)
+        {
+            try
+            {
+                if (amenityId == 0)
+                {
+                    var hotelAmenity = await _db.HotelAmenities.FirstOrDefaultAsync(x => string.Equals(x.Name.ToLower(), name.ToLower(), StringComparison.CurrentCultureIgnoreCase));
+                    return _mapper.Map<HotelAmenityDTO>(hotelAmenity);
+                }
+                else
+                {
+                    var hotelAmenity = await _db.HotelAmenities.FirstOrDefaultAsync(x =>
+                        string.Equals(x.Name.ToLower(), name.ToLower(), StringComparison.CurrentCultureIgnoreCase) &&
+                        x.Id != amenityId);
+                    return _mapper.Map<HotelAmenityDTO>(hotelAmenity);
+                }
+            }
+            catch
+            {
+                return null;
             }
         }
     }

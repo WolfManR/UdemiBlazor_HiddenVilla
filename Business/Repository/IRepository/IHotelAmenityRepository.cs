@@ -10,7 +10,8 @@ namespace Business.Repository.IRepository
         Task<HotelAmenityDTO> Create(HotelAmenityDTO amenityDTO);
         Task<int> Delete(int amenityId);
         Task<HotelAmenityDTO> Get(int amenityId);
-        IEnumerable<HotelAmenityDTO> Get();
+        Task<IEnumerable<HotelAmenityDTO>> Get();
+        Task<HotelAmenityDTO> IsAmenityUnique(string name, int amenityId = 0);
         Task<HotelAmenityDTO> Update(int amenityId, HotelAmenityDTO amenityDTO);
     }
 }

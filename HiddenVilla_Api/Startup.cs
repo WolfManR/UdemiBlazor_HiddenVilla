@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
 using System;
+using HiddenVilla_Api.Helper;
 
 namespace HiddenVilla_Api
 {
@@ -34,6 +35,8 @@ namespace HiddenVilla_Api
                 .AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            services.Configure<APISettings>(Configuration.GetSection(nameof(APISettings)));
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<IHotelRoomRepository, HotelRoomRepository>();

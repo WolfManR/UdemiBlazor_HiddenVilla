@@ -14,6 +14,9 @@ using Microsoft.OpenApi.Models;
 
 using System;
 using HiddenVilla_Api.Helper;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace HiddenVilla_Api
 {
@@ -36,7 +39,32 @@ namespace HiddenVilla_Api
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.Configure<APISettings>(Configuration.GetSection(nameof(APISettings)));
+            var apiSettingsSection = Configuration.GetSection(nameof(APISettings));
+            services.Configure<APISettings>(apiSettingsSection);
+
+            var apiSettings = apiSettingsSection.Get<APISettings>();
+            var key = Encoding.ASCII.GetBytes(apiSettings.SecretKey);
+
+            services.AddAuthentication(opt =>
+            {
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(x => {
+                    x.RequireHttpsMetadata = false;
+                    x.SaveToken = true;
+                    x.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateAudience = true,
+                        ValidateIssuer = true,
+                        ValidAudience = apiSettings.ValidAudience,
+                        ValidIssuer = apiSettings.ValidIssuer,
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<IHotelRoomRepository, HotelRoomRepository>();

@@ -17,6 +17,7 @@ using HiddenVilla_Api.Helper;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Serialization;
 
 namespace HiddenVilla_Api
 {
@@ -71,8 +72,18 @@ namespace HiddenVilla_Api
             services.AddScoped<IHotelImagesRepository, HotelImagesRepository>();
             services.AddScoped<IHotelAmenityRepository, HotelAmenityRepository>();
 
+            services.AddCors(c => c.AddPolicy("HiddenVilla", builder =>
+            {
+                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            }));
+
             services.AddRouting(options => options.LowercaseUrls = true);
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(opt => opt.JsonSerializerOptions.PropertyNamingPolicy = null)
+                .AddNewtonsoftJson(opt => {
+                    opt.SerializerSettings.ContractResolver = new DefaultContractResolver();
+                    opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "HiddenVilla_Api", Version = "v1" });
@@ -91,8 +102,11 @@ namespace HiddenVilla_Api
 
             app.UseHttpsRedirection();
 
+            app.UseCors("HiddenVilla");
+
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -9,7 +9,6 @@ using System.Linq;
 namespace HiddenVilla_Api.Controllers
 {
     [ApiController]
-    [Authorize]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {

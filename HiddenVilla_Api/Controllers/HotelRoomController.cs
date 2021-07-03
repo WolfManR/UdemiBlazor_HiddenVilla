@@ -23,7 +23,6 @@ namespace HiddenVilla_Api.Controllers
             this.hotelRoomRepository = hotelRoomRepository;
         }
 
-        [Authorize(Roles = SD.Role_Admin)]
         [HttpGet]
         public async Task<IActionResult> Get()
         {

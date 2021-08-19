@@ -7,3 +7,4 @@ riderModule.iml
 .vs/
 /HiddenVilla_Server/wwwroot/RoomImages
 *.user
+/HiddenVilla.sln.startup.json

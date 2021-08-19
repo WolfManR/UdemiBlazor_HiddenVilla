@@ -1,4 +1,5 @@
 ﻿@page "/hotel/rooms"
+@using System.Globalization
 @inject ILocalStorageService localStorage
 @inject IJSRuntime jsRuntime
 @inject IHotelRoomsService hotelRoomsService
@@ -12,6 +13,8 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		await Task.Delay(5000);
+
 		try
 		{
 			if(await localStorage.GetItemAsync<HomeVM>(SD.Local_InitialBooking) is { } home)
@@ -32,6 +35,8 @@
 
 	private async Task LoadRooms()
 	{
-		Rooms = await hotelRoomsService.GetHotelRooms(HomeModel.StartData.ToString("MM/dd/yyyy"), HomeModel.EndDate.ToString("MM/dd/yyyy"));
+		var start = HomeModel.StartData.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture);
+		var end = HomeModel.EndDate.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture);
+		Rooms = await hotelRoomsService.GetHotelRooms(start, end);
 	}
 }

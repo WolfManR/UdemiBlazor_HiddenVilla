@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace HiddenVilla_Client.Service.IService
 {
-    public interface IHotelRoomService
+    public interface IHotelRoomsService
     {
         public Task<IEnumerable<HotelRoomDTO>> GetHotelRooms(string checkInDate, string checkOutDate);
         public Task<HotelRoomDTO> GetHotelRoomDetails(int roomId, string checkInDate, string checkOutDate);

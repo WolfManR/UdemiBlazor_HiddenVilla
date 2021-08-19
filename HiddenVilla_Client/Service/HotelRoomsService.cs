@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace HiddenVilla_Client.Service
 {
-    public class HotelRoomService : IHotelRoomService
+    public class HotelRoomsService : IHotelRoomsService
     {
         private readonly HttpClient client;
 
-        public HotelRoomService(HttpClient client)
+        public HotelRoomsService(HttpClient client)
         {
             this.client = client;
         }

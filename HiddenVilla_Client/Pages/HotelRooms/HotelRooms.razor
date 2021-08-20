@@ -37,8 +37,14 @@
 
             <div class="col-8 col-md-2">
                 <div class="form-group" style="margin-top: 1.9rem !important;">
-
-                    <input type="submit" value="Update" class="btn btn-success btn-block form-control" />
+                        @if (IsProcessing)
+                        {
+                            <button class="btn btn-success btn-block form-control"><i class="fa fa-spin fa-spinner"></i>Processing...</button>
+                        }
+                        else
+                        {
+                            <input type="submit" value="Update" class="btn btn-success btn-block form-control" />
+                        }
 
                 </div>
             </div>
@@ -126,6 +132,7 @@ else{
     private HomeVM HomeModel { get; set; } = new HomeVM();
 
 	public IEnumerable<HotelRoomDTO> Rooms { get; set; } = new List<HotelRoomDTO>();
+    public bool IsProcessing { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -164,6 +171,10 @@ else{
 
     private async Task SaveBookingInfo()
     {
-        
+        IsProcessing = true;
+        HomeModel.EndDate = HomeModel.StartData.AddDays(HomeModel.NoOfNights);
+        await localStorage.SetItemAsync(SD.Local_InitialBooking, HomeModel);
+        await LoadRooms();
+        IsProcessing = false;
     }
 }

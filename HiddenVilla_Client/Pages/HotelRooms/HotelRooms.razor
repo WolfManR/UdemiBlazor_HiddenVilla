@@ -4,7 +4,7 @@
 @inject IJSRuntime jsRuntime
 @inject IHotelRoomsService hotelRoomsService
 
-if(Rooms is not null && Rooms.Any()){
+@if(Rooms is not null && Rooms.Any()){
 <EditForm Model="HomeModel" OnValidSubmit="SaveBookingInfo" class="bg-light">
 
     <div class="pt-3 pb-2 px-5 mx-1 mx-md-0 bg-secondary">
@@ -96,8 +96,13 @@ if(Rooms is not null && Rooms.Any()){
                             <span class="float-right">
                                 <span class="float-right">Max Occupancy : @room.Occupancy adults </span><br />
                                 <span class="float-right pt-1">Villa Size : @room.SqFt sqft</span><br />
-                                <h4 class="text-warning font-weight-bold pt-4">USD <span style="border-bottom:1px solid #ff6a00">##</span></h4>
-                                <span class="float-right">Cost for  ## nights</span>
+                                <h4 class="text-warning font-weight-bold pt-4">
+                                    USD 
+                                    <span style="border-bottom:1px solid #ff6a00">
+                                        @room.TotalAmount.ToString("#,#.00;(#,#.00#)", CultureInfo.InvariantCulture)
+                                    </span>
+                                </h4>
+                                <span class="float-right">Cost for @room.TotalDays nights</span>
                             </span>
                         </div>
                     </div>
@@ -149,7 +154,13 @@ else{
 		var start = HomeModel.StartData.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture);
 		var end = HomeModel.EndDate.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture);
 		Rooms = await hotelRoomsService.GetHotelRooms(start, end);
-	}
+
+        foreach (var room in Rooms)
+        {
+            room.TotalAmount = room.RegularRate * HomeModel.NoOfNights;
+            room.TotalDays = HomeModel.NoOfNights;
+        }
+    }
 
     private async Task SaveBookingInfo()
     {

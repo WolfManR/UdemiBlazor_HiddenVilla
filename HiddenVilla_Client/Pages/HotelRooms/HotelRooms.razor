@@ -5,27 +5,27 @@
 @inject IHotelRoomsService hotelRoomsService
 
 
-<form class="bg-light">
+<EditForm Model="HomeModel" OnValidSubmit="SaveBookingInfo" class="bg-light">
 
     <div class="pt-3 pb-2 px-5 mx-1 mx-md-0 bg-secondary">
-
+        <DataAnnotationsValidator/>
         <div class="row px-3 mx-3">
             <div class="col-6 col-md-4">
                 <div class="form-group">
                     <label class="text-warning">Check in Date</label>
-                    <input type="date" class="form-control" />
+                    <InputDate @bind-Value="HomeModel.StartData" class="form-control" />
                 </div>
             </div>
             <div class="col-6 col-md-4">
                 <div class="form-group">
                     <label class="text-warning">Check Out Date</label>
-                    <input disabled="disabled" readonly="readonly" type="date" class="form-control" />
+                    <input @bind="HomeModel.EndDate" disabled="disabled" readonly="readonly" type="date" class="form-control" />
                 </div>
             </div>
             <div class=" col-4 col-md-2">
                 <div class="form-group">
                     <label class="text-warning">No. of nights</label>
-                    <select class="form-control">
+                    <select class="form-control" @bind="HomeModel.NoOfNights">
                         <option value="Select" selected disabled="disabled">(Select No. Of Nights)</option>
                         @for (var i = 1; i <= 10; i++)
                         {
@@ -44,7 +44,7 @@
             </div>
         </div>
     </div>
-</form>
+</EditForm>
 <div class="mt-4 mx-4 px-0 px-md-5 mx-md-5">
 
 
@@ -110,7 +110,7 @@
 </div>
 
 @code {
-	private HomeVM HomeModel { get; set; } = new HomeVM();
+    private HomeVM HomeModel { get; set; } = new HomeVM();
 
 	public IEnumerable<HotelRoomDTO> Rooms { get; set; } = new List<HotelRoomDTO>();
 
@@ -142,4 +142,9 @@
 		var end = HomeModel.EndDate.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture);
 		Rooms = await hotelRoomsService.GetHotelRooms(start, end);
 	}
+
+    private async Task SaveBookingInfo()
+    {
+        
+    }
 }

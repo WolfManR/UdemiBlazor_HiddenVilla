@@ -12,6 +12,7 @@ using Models;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Business.Repository
@@ -78,9 +79,9 @@ namespace Business.Repository
             }
 		}
 
-		public Task<RoomOrderDetailsDTO> MarkPaymentSuccessful(int id)
+		public async Task<RoomOrderDetailsDTO> MarkPaymentSuccessful(int id)
 		{
-			throw new NotImplementedException();
+			return null;
 		}
 
 		public Task<bool> UpdateOrderStatus(int roomOrderId, string status)
@@ -88,9 +89,21 @@ namespace Business.Repository
 			throw new NotImplementedException();
 		}
 
-		public Task<bool> IsRoomBooked(int roomId, DateTime checkInDate, DateTime checkOutDate)
+		public async Task<bool> IsRoomBooked(int roomId, DateTime checkInDate, DateTime checkOutDate)
 		{
-			throw new NotImplementedException();
+            var exisingBooking = await context.RoomOrderDetails
+                .Where(x =>
+            x.RoomId == roomId &&
+            x.IsPaymentSuccessful &&
+            (
+            // check if checkin date that user wants does not fall in between ant dates for room that is booked
+            (checkInDate < x.CheckOutDate && checkInDate.Date > x.CheckInDate) ||
+            // check if checkout date that user wants does not fall in between ant dates for room that is booked
+            (checkOutDate.Date > x.CheckInDate.Date && checkInDate.Date < x.CheckInDate.Date)
+            ))
+                .FirstOrDefaultAsync();
+
+            return exisingBooking is not null;
 		}
 	}
 }

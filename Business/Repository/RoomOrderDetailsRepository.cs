@@ -6,6 +6,8 @@ using Common;
 
 using DataAccess.Data;
 
+using Microsoft.EntityFrameworkCore;
+
 using Models;
 
 using System;
@@ -43,17 +45,40 @@ namespace Business.Repository
 			}
 		}
 
+		public async Task<RoomOrderDetailsDTO> Get(int id)
+		{
+			try
+			{
+				var data = await context.RoomOrderDetails
+					.Include(u => u.HotelRoom).ThenInclude(r=>r.HotelRoomImages)
+					.FirstOrDefaultAsync(o=>o.Id == id);
+				if (data is null) return null;
+				var roomOrder = mapper.Map<RoomOrderDetailsDTO>(data);
+				roomOrder.HotelRoomDTO.TotalDays = roomOrder.CheckOutDate.Subtract(roomOrder.CheckInDate).Days;
+
+				return roomOrder;
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+		}
+
+		public async Task<IEnumerable<RoomOrderDetailsDTO>> Get()
+		{
+            try
+            {
+				var data = await context.RoomOrderDetails.Include(u => u.HotelRoom).ToListAsync();
+				var roomOrders = mapper.Map<IEnumerable<RoomOrderDetailsDTO>>(data);
+				return roomOrders;
+            }
+            catch (Exception)
+            {
+				return null;
+            }
+		}
+
 		public Task<RoomOrderDetailsDTO> MarkPaymentSuccessful(int id)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task<RoomOrderDetailsDTO> Get(int id)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task<IEnumerable<RoomOrderDetailsDTO>> Get()
 		{
 			throw new NotImplementedException();
 		}

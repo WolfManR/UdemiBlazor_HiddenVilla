@@ -23,6 +23,7 @@ namespace HiddenVilla_Client
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration.GetValue<string>("BaseApiUrl")) });
             builder.Services.AddScoped<IHotelRoomsService, HotelRoomsService>();
             builder.Services.AddScoped<IHotelAmenitiesService, HotelAmenitiesService>();
+            builder.Services.AddScoped<IRoomOrderDetailsService, RoomOrderDetailsService>();
 
             builder.Services.AddBlazoredLocalStorage();
             await builder.Build().RunAsync();

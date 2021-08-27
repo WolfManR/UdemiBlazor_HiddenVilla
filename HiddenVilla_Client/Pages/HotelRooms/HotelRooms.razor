@@ -158,9 +158,7 @@ else{
 
 	private async Task LoadRooms()
 	{
-		var start = HomeModel.StartData.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture);
-		var end = HomeModel.EndDate.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture);
-		Rooms = await hotelRoomsService.GetHotelRooms(start, end);
+		Rooms = await hotelRoomsService.GetHotelRooms(HomeModel.StartData.ToFormatedString(), HomeModel.EndDate.ToFormatedString());
 
         foreach (var room in Rooms)
         {

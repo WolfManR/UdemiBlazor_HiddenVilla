@@ -1,4 +1,7 @@
 ﻿@page "/hotel/room-details/{id:int}"
+@inject IJSRuntime jsRuntime
+@inject ILocalStorageService localStorage
+@inject IHotelRoomsService hotelRoomService
 
 <div class="mt-4 mx-4 px-0 px-md-5 mx-md-5">
 
@@ -101,4 +104,45 @@
 @code {
 	[Parameter]
 	public int? Id { get; set; }
+	public HotelRoomBookingVM HotelBooking { get; set; } = new();
+	private int NoOfNights { get; set; } = 1;
+
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			HotelBooking.OrderDetails = new RoomOrderDetailsDTO();
+			if(Id is not null)
+			{
+				if(await localStorage.GetItemAsync<HomeVM>(SD.Local_InitialBooking) is { } roomInitialInfo)
+				{
+					HotelBooking.OrderDetails.HotelRoomDTO = await hotelRoomService.GetHotelRoomDetails(
+						Id.Value,
+						roomInitialInfo.StartData.ToFormatedString(),
+						roomInitialInfo.EndDate.ToFormatedString());
+					NoOfNights = roomInitialInfo.NoOfNights;
+					HotelBooking.OrderDetails.CheckInDate = roomInitialInfo.StartData;
+					HotelBooking.OrderDetails.CheckOutDate = roomInitialInfo.EndDate;
+					HotelBooking.OrderDetails.HotelRoomDTO.TotalDays = roomInitialInfo.NoOfNights;
+					HotelBooking.OrderDetails.HotelRoomDTO.TotalAmount = roomInitialInfo.NoOfNights * HotelBooking.OrderDetails.HotelRoomDTO.RegularRate;
+				}
+				else
+				{
+					HotelBooking.OrderDetails.HotelRoomDTO = await hotelRoomService.GetHotelRoomDetails(
+						Id.Value,
+						DateTime.Now.ToFormatedString(),
+						DateTime.Now.AddDays(1).ToFormatedString());
+					NoOfNights = 1;
+					HotelBooking.OrderDetails.CheckInDate = DateTime.Now;
+					HotelBooking.OrderDetails.CheckOutDate = DateTime.Now.AddDays(1);
+					HotelBooking.OrderDetails.HotelRoomDTO.TotalDays = 1;
+					HotelBooking.OrderDetails.HotelRoomDTO.TotalAmount = HotelBooking.OrderDetails.HotelRoomDTO.RegularRate;
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			await jsRuntime.ToastrError(e.Message);
+		}
+	}
 }

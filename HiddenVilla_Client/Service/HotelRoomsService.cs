@@ -4,7 +4,6 @@ using Models;
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -30,7 +29,19 @@ namespace HiddenVilla_Client.Service
 
         public async Task<HotelRoomDTO> GetHotelRoomDetails(int roomId, string checkInDate, string checkOutDate)
         {
-            return default;
+            var response = await client.GetAsync($"api/hotelroom{roomId}?checkInDate={checkInDate}&checkOutDate={checkOutDate}");
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var room = JsonSerializer.Deserialize<HotelRoomDTO>(content);
+                return room;
+            }
+            else
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var errorModel = JsonSerializer.Deserialize<ErrorModel>(content);
+                throw new Exception(errorModel.ErrorMessage);
+            }
         }
     }
 }

@@ -3,7 +3,12 @@
 @inject ILocalStorageService localStorage
 @inject IHotelRoomsService hotelRoomService
 
-<div class="mt-4 mx-4 px-0 px-md-5 mx-md-5">
+@if(HotelBooking?.OrderDetails?.HotelRoomDTO?.HotelRoomImages is null){
+	<div class="spinner"></div>
+}
+else
+{
+	<div class="mt-4 mx-4 px-0 px-md-5 mx-md-5">
 
 	<div class="row p-2 my-3 " style="border-radius:20px; ">
 		<div class="col-12 col-lg-7 p-4" style="border: 1px solid #fff">
@@ -100,6 +105,8 @@
 		</div>
 	</div>
 </div>
+}
+
 
 
 

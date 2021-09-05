@@ -29,7 +29,7 @@ namespace HiddenVilla_Client.Service
 
         public async Task<HotelRoomDTO> GetHotelRoomDetails(int roomId, string checkInDate, string checkOutDate)
         {
-            var response = await client.GetAsync($"api/hotelroom{roomId}?checkInDate={checkInDate}&checkOutDate={checkOutDate}");
+            var response = await client.GetAsync($"api/hotelroom/{roomId}?checkInDate={checkInDate}&checkOutDate={checkOutDate}");
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();

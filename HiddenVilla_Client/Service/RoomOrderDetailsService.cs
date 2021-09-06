@@ -6,6 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
+using System.Text.Json;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace HiddenVilla_Client.Service
@@ -19,9 +22,24 @@ namespace HiddenVilla_Client.Service
             this.client = client;
         }
 
-        public Task<RoomOrderDetailsDTO> SaveRoomOrderDetails(RoomOrderDetailsDTO details)
+        public async Task<RoomOrderDetailsDTO> SaveRoomOrderDetails(RoomOrderDetailsDTO details)
         {
-            throw new NotImplementedException();
+            var content = JsonSerializer.Serialize(details);
+            var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/roomorder/create", bodyContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var contentTemp = await response.Content.ReadAsStringAsync();
+                var result = JsonSerializer.Deserialize<RoomOrderDetailsDTO>(contentTemp);
+                return result;
+            }
+            else
+            {
+                var contentTemp = await response.Content.ReadAsStringAsync();
+                var errorModel = JsonSerializer.Deserialize<ErrorModel>(contentTemp);
+                throw new Exception(errorModel.ErrorMessage);
+            }
         }
 
         public Task<RoomOrderDetailsDTO> MarkPaymentSuccessful(RoomOrderDetailsDTO details)

@@ -81,7 +81,18 @@ namespace Business.Repository
 
 		public async Task<RoomOrderDetailsDTO> MarkPaymentSuccessful(int id)
 		{
-			return null;
+			var data = await context.RoomOrderDetails.FindAsync(id);
+			if(data is null) return null;
+			if (!data.IsPaymentSuccessful)
+			{
+				data.IsPaymentSuccessful = true;
+				data.Status = SD.Status_Booked;
+				var markPaymentSuccessfull = context.RoomOrderDetails.Update(data);
+				await context.SaveChangesAsync();
+				return mapper.Map<RoomOrderDetailsDTO>(markPaymentSuccessfull.Entity);
+			}
+
+			return new RoomOrderDetailsDTO();
 		}
 
 		public Task<bool> UpdateOrderStatus(int roomOrderId, string status)

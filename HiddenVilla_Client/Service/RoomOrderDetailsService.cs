@@ -44,9 +44,24 @@ namespace HiddenVilla_Client.Service
             }
         }
 
-        public Task<RoomOrderDetailsDTO> MarkPaymentSuccessful(RoomOrderDetailsDTO details)
+        public async Task<RoomOrderDetailsDTO> MarkPaymentSuccessful(RoomOrderDetailsDTO details)
         {
-            throw new NotImplementedException();
+            var content = JsonSerializer.Serialize(details);
+            var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/roomorder/paymentsuccessfull", bodyContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var contentTemp = await response.Content.ReadAsStringAsync();
+                var result = JsonSerializer.Deserialize<RoomOrderDetailsDTO>(contentTemp);
+                return result;
+            }
+            else
+            {
+                var contentTemp = await response.Content.ReadAsStringAsync();
+                var errorModel = JsonSerializer.Deserialize<ErrorModel>(contentTemp);
+                throw new Exception(errorModel.ErrorMessage);
+            }
         }
     }
 }

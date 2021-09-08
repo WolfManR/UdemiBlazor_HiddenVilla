@@ -12,7 +12,7 @@ namespace Models
 		[Required] public DateTime CheckOutDate { get; set; }
 		public DateTime ActualCheckInDate { get; set; }
 		public DateTime ActualCheckOutDate { get; set; }
-		[Required] public long TotalCost { get; set; }
+		[Required] public double TotalCost { get; set; }
 		[Required] public int RoomId { get; set; }
 		public bool IsPaymentSuccessful { get; set; } = false;
 		[Required] public string Name { get; set; }

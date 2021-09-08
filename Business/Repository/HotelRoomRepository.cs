@@ -23,9 +23,6 @@ namespace Business.Repository
             _mapper = mapper;
         }
 
-        #region Implementation of IHotelRoomRepository
-
-        /// <inheritdoc />
         public async Task<HotelRoomDTO> Create(HotelRoomDTO hotelRoomDTO)
         {
             var hotelRoom = _mapper.Map<HotelRoom>(hotelRoomDTO);
@@ -36,7 +33,6 @@ namespace Business.Repository
             return _mapper.Map<HotelRoomDTO>(addedHotelRoom.Entity);
         }
 
-        /// <inheritdoc />
         public async Task<HotelRoomDTO> Update(int roomId, HotelRoomDTO hotelRoomDTO)
         {
             try
@@ -59,13 +55,19 @@ namespace Business.Repository
             }
         }
 
-        /// <inheritdoc />
         public async Task<HotelRoomDTO> Get(int roomId, string checkInDateStr, string checkOutDateStr)
         {
             try
             {
                 var hotelRoom = await _db.HotelRooms.Include(r => r.HotelRoomImages).FirstOrDefaultAsync(x=>x.Id == roomId);
-                return _mapper.Map<HotelRoomDTO>(hotelRoom);
+                var dto = _mapper.Map<HotelRoomDTO>(hotelRoom);
+
+                if(!string.IsNullOrEmpty(checkInDateStr) && !string.IsNullOrEmpty(checkOutDateStr))
+				{
+                    dto.IsBooked = await IsRoomBooked(roomId, checkInDateStr, checkOutDateStr);
+				}
+
+                return dto;
             }
             catch
             {
@@ -73,7 +75,6 @@ namespace Business.Repository
             }
         }
 
-        /// <inheritdoc />
         public async Task<int> Delete(int roomId)
         {
             var roomDetails = await _db.HotelRooms.FindAsync(roomId);
@@ -87,12 +88,20 @@ namespace Business.Repository
             return await _db.SaveChangesAsync();
         }
 
-        /// <inheritdoc />
         public async Task<IEnumerable<HotelRoomDTO>> Get(string checkInDateStr, string checkOutDateStr)
         {
             try
             {
                 IEnumerable<HotelRoomDTO> hotelRoomDTOs = _db.HotelRooms.Include(r => r.HotelRoomImages).ProjectTo<HotelRoomDTO>(_mapper.ConfigurationProvider);
+
+                if (!string.IsNullOrEmpty(checkInDateStr) && !string.IsNullOrEmpty(checkOutDateStr))
+                {
+					foreach (var room in hotelRoomDTOs)
+					{
+                        room.IsBooked = await IsRoomBooked(room.Id, checkInDateStr, checkOutDateStr);
+                    }
+                }
+
                 return hotelRoomDTOs;
             }
             catch
@@ -101,7 +110,6 @@ namespace Business.Repository
             }
         }
 
-        /// <inheritdoc />
         public async Task<HotelRoomDTO> IsRoomUnique(string name, int roomId = 0)
         {
             try
@@ -125,6 +133,36 @@ namespace Business.Repository
             }
         }
 
-        #endregion
+        public async Task<bool> IsRoomBooked(int roomId, string checkInDateStr, string checkOutDateStr)
+        {
+			try
+			{
+                if(!string.IsNullOrEmpty(checkOutDateStr) && !string.IsNullOrEmpty(checkInDateStr))
+				{
+                    DateTime checkInDate = DateTime.ParseExact(checkInDateStr, "MM/dd/yyyy", null);
+                    DateTime checkOutDate = DateTime.ParseExact(checkOutDateStr, "MM/dd/yyyy", null);
+
+                    var exisingBooking = await _db.RoomOrderDetails
+                        .Where(x =>
+                            x.RoomId == roomId &&
+                            x.IsPaymentSuccessful &&
+                            (
+                                // check if checkin date that user wants does not fall in between ant dates for room that is booked
+                                (checkInDate < x.CheckOutDate && checkInDate.Date >= x.CheckInDate) ||
+                                // check if checkout date that user wants does not fall in between ant dates for room that is booked
+                                (checkOutDate.Date > x.CheckInDate.Date && checkInDate.Date <= x.CheckInDate.Date)
+                            ))
+                        .FirstOrDefaultAsync();
+
+                    return exisingBooking is not null;
+                }
+
+                return true;
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+        }
     }
 }

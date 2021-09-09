@@ -1,5 +1,4 @@
 ﻿@page "/"
-@using ViewModels
 @inject ILocalStorageService localStorage
 @inject IJSRuntime JsRuntime
 @inject NavigationManager NavigationManager
@@ -97,18 +96,16 @@
 	public IEnumerable<HotelAmenityDTO> HotelAmenities { get; set; } = new List<HotelAmenityDTO>();
 
 	protected override async Task OnInitializedAsync()
-{
-	await Task.Delay(5000);
-
-	try
 	{
-		await LoadAmenities();
+		try
+		{
+			await LoadAmenities();
+		}
+		catch(Exception e)
+		{
+			await JsRuntime.ToastrError(e.Message);
+		}
 	}
-	catch(Exception e)
-	{
-		await JsRuntime.ToastrError(e.Message);
-	}
-}
 
 	private async Task SaveInitialData()
 	{

@@ -28,9 +28,22 @@ namespace HiddenVilla_Client.Service
             this.localStorage = localStorage;
         }
 
-        public Task<RegistrationResponseDTO> RegisterUser(UserRequestDTO userForRegistration)
+        public async Task<RegistrationResponseDTO> RegisterUser(UserRequestDTO userForRegistration)
         {
-            throw new NotImplementedException();
+            var content = JsonSerializer.Serialize(userForRegistration);
+            var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync("api/account/signup", bodyContent);
+
+            var contentTemp = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<RegistrationResponseDTO>(contentTemp);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return new RegistrationResponseDTO { IsRegistrationSuccessful = true };
+            }
+
+            return result;
         }
 
         public async Task<AuthenticationResponseDTO> Login(AuthenticationDTO userForAuthentication)
@@ -55,9 +68,11 @@ namespace HiddenVilla_Client.Service
             return result;
         }
 
-        public Task Logout()
+        public async Task Logout()
         {
-            throw new NotImplementedException();
+            await localStorage.RemoveItemAsync(SD.Local_Token);
+            await localStorage.RemoveItemAsync(SD.Local_UserDetails);
+            client.DefaultRequestHeaders.Authorization = null;
         }
     }
 }

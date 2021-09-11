@@ -170,6 +170,14 @@ else
 					HotelBooking.OrderDetails.HotelRoomDTO.TotalAmount = HotelBooking.OrderDetails.HotelRoomDTO.RegularRate;
 				}
 			}
+
+			if(await localStorage.GetItemAsync<UserDTO>(SD.Local_UserDetails) is { } user)
+			{
+				HotelBooking.OrderDetails.UserId = user.Id;
+				HotelBooking.OrderDetails.Name = user.Name;
+				HotelBooking.OrderDetails.Email = user.Email;
+				HotelBooking.OrderDetails.Phone = user.PhoneNo;
+			}
 		}
 		catch (Exception e)
 		{

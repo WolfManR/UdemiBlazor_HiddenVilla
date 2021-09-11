@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Common;
 using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace HiddenVilla_Client.Service
 {
@@ -21,12 +22,14 @@ namespace HiddenVilla_Client.Service
     {
         private readonly HttpClient client;
         private readonly ILocalStorageService localStorage;
+		private readonly AuthenticationStateProvider authenticationStateProvider;
 
-        public AuthenticationService(HttpClient client, ILocalStorageService localStorage)
+		public AuthenticationService(HttpClient client, ILocalStorageService localStorage, AuthenticationStateProvider authenticationStateProvider)
         {
             this.client = client;
             this.localStorage = localStorage;
-        }
+			this.authenticationStateProvider = authenticationStateProvider;
+		}
 
         public async Task<RegistrationResponseDTO> RegisterUser(UserRequestDTO userForRegistration)
         {
@@ -60,6 +63,9 @@ namespace HiddenVilla_Client.Service
             {
                 await localStorage.SetItemAsync(SD.Local_Token, result.Token);
                 await localStorage.SetItemAsync(SD.Local_UserDetails, result.UserDTO);
+
+                ((AuthStateProvider)authenticationStateProvider).NotifyUserLoggedIn(result.Token);
+
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", result.Token);
 
                 return new AuthenticationResponseDTO { IsAuthSuccessful = true };
@@ -72,6 +78,7 @@ namespace HiddenVilla_Client.Service
         {
             await localStorage.RemoveItemAsync(SD.Local_Token);
             await localStorage.RemoveItemAsync(SD.Local_UserDetails);
+            ((AuthStateProvider)authenticationStateProvider).NotifyUserLogout();
             client.DefaultRequestHeaders.Authorization = null;
         }
     }

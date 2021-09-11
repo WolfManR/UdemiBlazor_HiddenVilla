@@ -1,9 +1,12 @@
 ﻿@page "/hotel/room-details/{id:int}"
+@using Microsoft.AspNetCore.Authorization
 @inject IJSRuntime jsRuntime
 @inject ILocalStorageService localStorage
 @inject IHotelRoomsService hotelRoomService
 @inject IStripePaymentService stripePaymentService
 @inject IRoomOrderDetailsService roomOrderDetailsService
+
+@attribute [Authorize(Roles = SD.Role_Customer)]
 
 @if (HotelBooking?.OrderDetails?.HotelRoomDTO?.HotelRoomImages is null)
 {

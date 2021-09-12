@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using Stripe;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace HiddenVilla_Api
 {
@@ -75,6 +76,7 @@ namespace HiddenVilla_Api
             services.AddScoped<IHotelImagesRepository, HotelImagesRepository>();
             services.AddScoped<IHotelAmenityRepository, HotelAmenityRepository>();
             services.AddScoped<IRoomOrderDetailsRepository, RoomOrderDetailsRepository>();
+            services.AddScoped<IEmailSender, EmailSender>();
 
             services.AddCors(c => c.AddPolicy("HiddenVilla", builder =>
             {

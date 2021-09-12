@@ -1,5 +1,6 @@
 ﻿using Business.Repository.IRepository;
 
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 using Models;
@@ -15,10 +16,12 @@ namespace HiddenVilla_Api.Controllers
     public class RoomOrderController : ControllerBase
     {
         private readonly IRoomOrderDetailsRepository repository;
+        private readonly IEmailSender emailSender;
 
-        public RoomOrderController(IRoomOrderDetailsRepository repository)
+        public RoomOrderController(IRoomOrderDetailsRepository repository, IEmailSender emailSender)
         {
             this.repository = repository;
+            this.emailSender = emailSender;
         }
 
         [HttpPost]
@@ -53,6 +56,12 @@ namespace HiddenVilla_Api.Controllers
                         ErrorMessage = "Can not mark payment as successfull"
                     });
                 }
+
+                await emailSender.SendEmailAsync(
+                    details.Email,
+                    "Booking Confirmed - Hidden Villa",
+                    "Your booking has been confirmed at Hidden Villa with order ID : " + details.Id);
+
                 return Ok(result);
             }
             else

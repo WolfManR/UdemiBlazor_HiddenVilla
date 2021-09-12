@@ -18,7 +18,7 @@
                     AllowSorting="true"
                     Data="@HotelRoomOrders"
                     TItem="RoomOrderDetailsDTO"
-                    ColumnWidth="300px"
+                    ColumnWidth="200px"
                     LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
             <RadzenDataGridColumn TItem="RoomOrderDetailsDTO" Property="Name" Title="Name" />
@@ -29,7 +29,7 @@
             <RadzenDataGridColumn TItem="RoomOrderDetailsDTO" Property="CheckIndata" Title="Check In Date" FormatString="{0:d}" />
             <RadzenDataGridColumn TItem="RoomOrderDetailsDTO" Property="Id" Title="">
                 <Template Context="data">
-                    <NavLink class="btn btn-primary" href="@($"hotel-room-order/details/{data.Id}")">Edit</NavLink>
+                    <NavLink class="btn btn-primary" href="@($"hotel-room-order/details/{data.Id}")">Details</NavLink>
 				</Template>
 			</RadzenDataGridColumn>
         </Columns>

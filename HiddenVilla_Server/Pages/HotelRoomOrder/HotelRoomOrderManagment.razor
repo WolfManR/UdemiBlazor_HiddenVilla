@@ -101,14 +101,14 @@
                 @if (HotelBooking.Status == SD.Status_Booked || HotelBooking.Status == SD.Status_Pending)
                 {
                     <div class="col-3">
-                        <button class="btn btn-danger form-control">Cancel Booking </button>
+                        <button @onclick="CancelBooking" class="btn btn-danger form-control">Cancel Booking </button>
                     </div>
                 }
                 
                 @if (HotelBooking.Status == SD.Status_Booked)
                 {
                     <div class="col-3 offset-1">
-                        <button class="btn btn-warning form-control">No Show </button>
+                        <button @onclick="NoShowBooking" class="btn btn-warning form-control">No Show </button>
                     </div>
                 }
             </div>
@@ -163,12 +163,12 @@
 
                 @if (HotelBooking.Status == SD.Status_Booked)
                 {
-                    <button class="btn btn-success">Confirm Check In</button>
+                    <button @onclick="ConfirmCheckIn" class="btn btn-success">Confirm Check In</button>
                 }
                 
                 @if (HotelBooking.Status == SD.Status_CheckIn)
                 {
-                    <button class="btn btn-success">Confirm Check Out </button>
+                    <button @onclick="ConfirmCheckOut" class="btn btn-success">Confirm Check Out </button>
                 }
 
             </div>
@@ -176,10 +176,6 @@
         
         </div>
     }
-
-
-
-
 
 </div>
 

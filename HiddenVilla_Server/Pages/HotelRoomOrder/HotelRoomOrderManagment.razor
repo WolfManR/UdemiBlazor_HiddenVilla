@@ -81,7 +81,7 @@
                         <span class="float-right pt-1">Cost for @HotelBooking.HotelRoomDTO.TotalDays nights</span><br />
                         <h4 class="text-warning font-weight-bold pt-5 float-right">USD 
                             <span style="border-bottom:1px solid #ff6a00"> 
-                                @HotelBooking.HotelRoomDTO.TotalAmount.ToString("#,#.00#;(#,#.00#)")
+                                @HotelBooking.TotalCost.ToString("#,#.00#;(#,#.00#)")
                             </span>
                         </h4>
 
@@ -118,19 +118,19 @@
             <div class="row px-2 text-success border-bottom"><div class="col-7 py-1"><p style="font-size:x-large;margin:0px;">Enter Details</p></div></div>
             <div class="form-group pt-2">
                 <label class="text-warning">Booking Status</label>
-                <InputText @bind-Value="HotelBooking.Status" type="text" disabled class="form-control" />
+                <input @bind-value="HotelBooking.Status" type="text" disabled class="form-control" />
             </div>
             <div class="form-group pt-2">
                 <label class="text-warning">Name</label>
-                <InputText @bind-Value="HotelBooking.Name" type="text" disabled class="form-control" />
+                <input @bind-value="HotelBooking.Name" type="text" disabled class="form-control" />
             </div>
             <div class="form-group pt-2">
                 <label class="text-warning">Phone</label>
-                <InputText @bind-Value="HotelBooking.Phone" type="text" disabled class="form-control" />
+                <input @bind-value="HotelBooking.Phone" type="text" disabled class="form-control" />
             </div>
             <div class="form-group">
                 <label class="text-warning">Email</label>
-                <InputText @bind-Value="HotelBooking.Email" type="text" disabled class="form-control" />
+                <input @bind-value="HotelBooking.Email" type="text" disabled class="form-control" />
             </div>
             <div class="form-group">
                 <label class="text-warning">Check in Date</label>
